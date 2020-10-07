@@ -1,6 +1,7 @@
 package nl.pim16aap2.ProtocolLibBenchmark;
 
 import com.comphenix.protocol.events.SerializedOfflinePlayer;
+import com.comphenix.protocol.injector.server.TemporaryPlayerFactory;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.openjdk.jmh.annotations.Benchmark;
@@ -27,6 +28,7 @@ public class BenchmarkRunner
     private static final boolean playedBefore = true;
     private static final boolean whitelisted = true;
     private static final SerializedOfflinePlayer serializedOfflinePlayer;
+    private static final TemporaryPlayerFactory temporaryPlayerFactory = new TemporaryPlayerFactory();
 
     static
     {
@@ -90,6 +92,38 @@ public class BenchmarkRunner
         }
     }
 
+    @Benchmark
+    @BenchmarkMode(Mode.All)
+    @OutputTimeUnit(TimeUnit.NANOSECONDS)
+    public void benchmarkTemporaryPlayerFactor()
+    {
+        temporaryPlayerFactory.createTemporaryPlayer(null);
+    }
+
+    @Benchmark
+    @BenchmarkMode(Mode.AverageTime)
+    @OutputTimeUnit(TimeUnit.NANOSECONDS)
+    public void benchmarkNativeNew()
+    {
+        new TestClass(uuid);
+    }
+
+    @Benchmark
+    @BenchmarkMode(Mode.AverageTime)
+    @OutputTimeUnit(TimeUnit.NANOSECONDS)
+    public void benchmarkNativeAccess()
+    {
+        offlinePlayer.getName();
+        offlinePlayer.getUniqueId();
+        offlinePlayer.getFirstPlayed();
+        offlinePlayer.getLastPlayed();
+        offlinePlayer.isOp();
+        offlinePlayer.isBanned();
+        offlinePlayer.hasPlayedBefore();
+        offlinePlayer.isOnline();
+        offlinePlayer.isWhitelisted();
+    }
+
     public static void main(String[] args)
         throws Exception
     {
@@ -100,5 +134,20 @@ public class BenchmarkRunner
     public static class ProxyPlayer
     {
         Player player = serializedOfflinePlayer.getProxyPlayer();
+    }
+
+    public static class TestClass
+    {
+        private final UUID uuid;
+
+        public TestClass(final UUID uuid)
+        {
+            this.uuid = uuid;
+        }
+
+        public UUID getUuid()
+        {
+            return uuid;
+        }
     }
 }
