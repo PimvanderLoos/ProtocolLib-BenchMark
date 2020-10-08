@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import java.util.Map;
 import java.util.UUID;
 
-public class OfflinePlayer implements org.bukkit.OfflinePlayer
+public class OfflinePlayerImpl implements org.bukkit.OfflinePlayer
 {
     private final String name;
     private final UUID uuid;
@@ -21,9 +21,9 @@ public class OfflinePlayer implements org.bukkit.OfflinePlayer
     private final boolean online;
     private final boolean whitelisted;
 
-    public OfflinePlayer(final String name, final UUID uuid, final long firstPlayed, final long lastPlayed,
-                         final boolean op, final boolean banned, final boolean playedBefore, final boolean online,
-                         final boolean whitelisted)
+    public OfflinePlayerImpl(final String name, final UUID uuid, final long firstPlayed, final long lastPlayed,
+                             final boolean op, final boolean banned, final boolean playedBefore, final boolean online,
+                             final boolean whitelisted)
     {
         this.name = name;
         this.uuid = uuid;
@@ -90,6 +90,31 @@ public class OfflinePlayer implements org.bukkit.OfflinePlayer
     {
         return op;
     }
+
+    public void getDisplayName()
+    {
+        throw new UnsupportedOperationException(
+            "The method getDisplayName is not supported for offline players.");
+    }
+
+    public void getCompassTarget()
+    {
+        throw new UnsupportedOperationException(
+            "The method getCompassTarget is not supported for offline players.");
+    }
+
+    public void isSneaking()
+    {
+        throw new UnsupportedOperationException(
+            "The method isSneaking is not supported for offline players.");
+    }
+
+
+/*
+
+
+UNUSED METHOD:
+ */
 
 
     @Override

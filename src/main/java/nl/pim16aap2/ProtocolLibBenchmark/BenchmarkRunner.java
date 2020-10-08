@@ -2,7 +2,6 @@ package nl.pim16aap2.ProtocolLibBenchmark;
 
 import com.comphenix.protocol.events.SerializedOfflinePlayer;
 import com.comphenix.protocol.injector.server.TemporaryPlayerFactory;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
@@ -16,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 public class BenchmarkRunner
 {
-    private static final OfflinePlayer offlinePlayer;
+    private static final OfflinePlayerImpl offlinePlayerImpl;
 
     private static final String name = "playerName";
     private static final UUID uuid = UUID.randomUUID();
@@ -32,9 +31,9 @@ public class BenchmarkRunner
 
     static
     {
-        offlinePlayer = new nl.pim16aap2.ProtocolLibBenchmark.OfflinePlayer(name, uuid, firstPlayed, lastPlayed, op,
-                                                                            banned, playedBefore, online, whitelisted);
-        serializedOfflinePlayer = new SerializedOfflinePlayer(offlinePlayer);
+        offlinePlayerImpl = new OfflinePlayerImpl(name, uuid, firstPlayed, lastPlayed, op,
+                                                  banned, playedBefore, online, whitelisted);
+        serializedOfflinePlayer = new SerializedOfflinePlayer(offlinePlayerImpl);
     }
 
     @Benchmark
@@ -101,7 +100,7 @@ public class BenchmarkRunner
     }
 
     @Benchmark
-    @BenchmarkMode(Mode.AverageTime)
+    @BenchmarkMode(Mode.All)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     public void benchmarkNativeNew()
     {
@@ -109,19 +108,50 @@ public class BenchmarkRunner
     }
 
     @Benchmark
-    @BenchmarkMode(Mode.AverageTime)
+    @BenchmarkMode(Mode.All)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     public void benchmarkNativeAccess()
     {
-        offlinePlayer.getName();
-        offlinePlayer.getUniqueId();
-        offlinePlayer.getFirstPlayed();
-        offlinePlayer.getLastPlayed();
-        offlinePlayer.isOp();
-        offlinePlayer.isBanned();
-        offlinePlayer.hasPlayedBefore();
-        offlinePlayer.isOnline();
-        offlinePlayer.isWhitelisted();
+        offlinePlayerImpl.getName();
+        offlinePlayerImpl.getUniqueId();
+        offlinePlayerImpl.getFirstPlayed();
+        offlinePlayerImpl.getLastPlayed();
+        offlinePlayerImpl.isOp();
+        offlinePlayerImpl.isBanned();
+        offlinePlayerImpl.hasPlayedBefore();
+        offlinePlayerImpl.isOnline();
+        offlinePlayerImpl.isWhitelisted();
+    }
+
+    @Benchmark
+    @BenchmarkMode(Mode.All)
+    @OutputTimeUnit(TimeUnit.NANOSECONDS)
+    public void benchmarkNativeStubbedMethods()
+    {
+        try
+        {
+            offlinePlayerImpl.getDisplayName();
+        }
+        catch (Throwable t)
+        {
+            // Ignore
+        }
+        try
+        {
+            offlinePlayerImpl.getCompassTarget();
+        }
+        catch (Throwable t)
+        {
+            // Ignore
+        }
+        try
+        {
+            offlinePlayerImpl.isSneaking();
+        }
+        catch (Throwable t)
+        {
+            // Ignore
+        }
     }
 
     public static void main(String[] args)
